@@ -1,0 +1,44 @@
+plugins {
+	id "fabric-loom" version "0.2.5-SNAPSHOT"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+minecraft {}
+
+repositories {
+	mavenCentral()
+
+	maven {
+		url "https://jitpack.io"
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
+	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	modApi group: "com.github.TheRandomLabs", name: "TRLUtils-Config", version: "master-SNAPSHOT", changing: true
+	include group: "com.github.TheRandomLabs", name: "TRLUtils-Config", version: "master-SNAPSHOT", changing: true
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
+	from sourceSets.main.allSource
+}
+
+jar {
+	from "LICENSE"
+}
