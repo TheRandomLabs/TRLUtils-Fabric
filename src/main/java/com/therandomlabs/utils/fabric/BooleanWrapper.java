@@ -1,4 +1,4 @@
-package com.therandomlabs.utils.fabric.config;
+package com.therandomlabs.utils.fabric;
 
 public final class BooleanWrapper {
 	private boolean value;

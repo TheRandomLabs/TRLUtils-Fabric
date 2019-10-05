@@ -1,4 +1,4 @@
-package com.therandomlabs.utils.fabric.config.config;
+package com.therandomlabs.utils.fabric.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import com.therandomlabs.utils.config.ConfigManager;
-import com.therandomlabs.utils.fabric.config.FabricUtils;
+import com.therandomlabs.utils.fabric.FabricUtils;
 
 public final class FabricConfig {
 	@Retention(RetentionPolicy.RUNTIME)

@@ -1,4 +1,4 @@
-package com.therandomlabs.utils.fabric.config.config;
+package com.therandomlabs.utils.fabric.config;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.therandomlabs.utils.config.TypeAdapter;
 import com.therandomlabs.utils.config.TypeAdapters;
-import com.therandomlabs.utils.fabric.config.FabricUtils;
+import com.therandomlabs.utils.fabric.FabricUtils;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;

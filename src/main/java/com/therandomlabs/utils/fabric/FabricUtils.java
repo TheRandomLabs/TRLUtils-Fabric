@@ -1,4 +1,4 @@
-package com.therandomlabs.utils.fabric.config;
+package com.therandomlabs.utils.fabric;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

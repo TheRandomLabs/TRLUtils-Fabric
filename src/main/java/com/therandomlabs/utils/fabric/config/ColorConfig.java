@@ -1,4 +1,4 @@
-package com.therandomlabs.utils.fabric.config.config;
+package com.therandomlabs.utils.fabric.config;
 
 import net.minecraft.util.DyeColor;
 
