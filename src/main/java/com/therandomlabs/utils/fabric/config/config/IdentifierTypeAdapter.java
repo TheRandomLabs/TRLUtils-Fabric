@@ -41,14 +41,15 @@ public final class IdentifierTypeAdapter implements TypeAdapter {
 	@Override
 	public Object getValue(CommentedFileConfig config, String name, Object defaultValue) {
 		if(!isArray) {
-			final String identifier = config.get(name);
+			final String identifierString = config.get(name);
 
-			if(identifier.isEmpty()) {
+			if(identifierString.isEmpty()) {
 				return defaultValue;
 			}
 
-			final Object object = registry.get(new Identifier(identifier.replaceAll("\\s", "")));
-			return object == null ? defaultValue : object;
+			final Identifier identifier =
+					new Identifier(identifierString.replaceAll("\\s", ""));
+			return registry.containsId(identifier) ? registry.get(identifier) : defaultValue;
 		}
 
 		final List<String> list = config.get(name);
