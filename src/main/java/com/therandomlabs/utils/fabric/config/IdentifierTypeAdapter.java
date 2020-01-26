@@ -41,6 +41,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 
+@SuppressWarnings("NullAway")
 final class IdentifierTypeAdapter implements TypeAdapter {
 	private static final Field DEFAULT_ENTRIES =
 			FabricUtils.findField(Registry.class, "DEFAULT_ENTRIES", "field_11140");

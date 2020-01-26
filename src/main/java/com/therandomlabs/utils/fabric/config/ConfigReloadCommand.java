@@ -38,6 +38,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a command that reloads a TRLUtils-Config configuration.
@@ -48,9 +49,12 @@ public final class ConfigReloadCommand {
 
 	private final Class<?> configClass;
 
+	@Nullable
 	private Consumer<? super CommandSource> preReload;
+	@Nullable
 	private Consumer<? super CommandSource> postReload;
 
+	@Nullable
 	private String serverSuccessMessage;
 
 	/**
@@ -168,21 +172,21 @@ public final class ConfigReloadCommand {
 			postReload.accept(source);
 		}
 
-		final ServerCommandSource serverSource =
-				source instanceof ServerCommandSource ? (ServerCommandSource) source : null;
 		final boolean dedicatedServer = FabricUtils.isDedicatedServer(source);
 
 		//Assume the source is a ServerCommandSource for now
 		if (serverSuccessMessage != null && dedicatedServer) {
-			serverSource.sendFeedback(new LiteralText(serverSuccessMessage), true);
+			((ServerCommandSource) source).sendFeedback(
+					new LiteralText(serverSuccessMessage), true
+			);
 		} else {
 			final String currentName = dedicatedServer ? name : clientName;
 			final Text text = new TranslatableText("commands." + currentName + ".success");
 
-			if (serverSource == null) {
-				((CottonClientCommandSource) source).sendFeedback(text);
+			if (source instanceof ServerCommandSource) {
+				((ServerCommandSource) source).sendFeedback(text, true);
 			} else {
-				serverSource.sendFeedback(text, true);
+				((CottonClientCommandSource) source).sendFeedback(text);
 			}
 		}
 

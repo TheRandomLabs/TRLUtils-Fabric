@@ -25,7 +25,6 @@ package com.therandomlabs.utils.fabric;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -191,11 +190,7 @@ public final class FabricUtils {
 	 * @return the specified string as a normalized {@link Path}.
 	 */
 	public static Path getPath(String path) {
-		try {
-			return Paths.get(path).normalize();
-		} catch (InvalidPathException ignored) {}
-
-		return null;
+		return Paths.get(path).normalize();
 	}
 
 	/**
@@ -230,7 +225,7 @@ public final class FabricUtils {
 	 * @return the {@link Field} with any of the specified names, or otherwise {@code null}.
 	 */
 	@Nullable
-	public static Field findField(Class<?> clazz, String... names) {
+	public static Field findFieldNullable(Class<?> clazz, String... names) {
 		Preconditions.checkNotNull(clazz, "clazz should not be null");
 		Preconditions.checkNotNull(names, "names should not be null");
 
@@ -247,6 +242,26 @@ public final class FabricUtils {
 	}
 
 	/**
+	 * Quietly retrieves the field with any of the specified names in the specified class.
+	 *
+	 * @param clazz a class.
+	 * @param names an array of possible field names.
+	 * @return the {@link Field} with any of the specified names.
+	 * @throws IllegalArgumentException if the specified field is not found.
+	 */
+	public static Field findField(Class<?> clazz, String... names) {
+		final Field field = findFieldNullable(clazz, names);
+
+		if (field == null) {
+			throw new IllegalArgumentException(
+					"No such field " + Arrays.toString(names) + " in: " + clazz.getName()
+			);
+		}
+
+		return field;
+	}
+
+	/**
 	 * Quietly retrieves the method with the specified name and parameter types in the
 	 * specified class.
 	 *
@@ -257,8 +272,10 @@ public final class FabricUtils {
 	 */
 	@SuppressWarnings("GrazieInspection")
 	@Nullable
-	public static Method findMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {
-		return findMethod(clazz, name, name, parameterTypes);
+	public static Method findMethodNullable(
+			Class<?> clazz, String name, Class<?>... parameterTypes
+	) {
+		return findMethodNullable(clazz, name, name, parameterTypes);
 	}
 
 	/**
@@ -273,7 +290,7 @@ public final class FabricUtils {
 	 */
 	@SuppressWarnings("GrazieInspection")
 	@Nullable
-	public static Method findMethod(
+	public static Method findMethodNullable(
 			Class<?> clazz, String name, String obfuscatedName, Class<?>... parameterTypes
 	) {
 		Preconditions.checkNotNull(clazz, "clazz should not be null");
@@ -292,6 +309,59 @@ public final class FabricUtils {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Quietly retrieves the method with the specified name and parameter types in the
+	 * specified class.
+	 *
+	 * @param clazz a class.
+	 * @param name a method name.
+	 * @param parameterTypes an array of parameter types.
+	 * @return a {@link Method} that matches the specified parameters.
+	 * @throws IllegalArgumentException if the specified field is not found.
+	 */
+	@SuppressWarnings("GrazieInspection")
+	@Nullable
+	public static Method findMethod(
+			Class<?> clazz, String name, Class<?>... parameterTypes
+	) {
+		final Method method = findMethodNullable(clazz, name, parameterTypes);
+
+		if (method == null) {
+			throw new IllegalArgumentException(
+					"No such method " + name + " in: " + clazz.getName()
+			);
+		}
+
+		return method;
+	}
+
+	/**
+	 * Quietly retrieves the method with the specified name or obfuscated name and parameter types
+	 * in the specified class.
+	 *
+	 * @param clazz a class.
+	 * @param name a method name.
+	 * @param obfuscatedName an obfuscated method name.
+	 * @param parameterTypes an array of parameter types.
+	 * @return a {@link Method} that matches the specified parameters.
+	 * @throws IllegalArgumentException if the specified field is not found.
+	 */
+	@SuppressWarnings("GrazieInspection")
+	@Nullable
+	public static Method findMethod(
+			Class<?> clazz, String name, String obfuscatedName, Class<?>... parameterTypes
+	) {
+		final Method method = findMethodNullable(clazz, name, obfuscatedName, parameterTypes);
+
+		if (method == null) {
+			throw new IllegalArgumentException(
+					"No such method " + name + " in: " + clazz.getName()
+			);
+		}
+
+		return method;
 	}
 
 	/**
