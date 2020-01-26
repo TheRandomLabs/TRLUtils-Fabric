@@ -64,30 +64,19 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 
 	@Override
 	public Object getValue(CommentedFileConfig config, String name, Object defaultValue) {
-		if (!isArray) {
-			final String identifierString = config.get(name);
-
-			if (identifierString.isEmpty()) {
-				return defaultValue;
-			}
-
-			final Identifier identifier =
-					new Identifier(identifierString.replaceAll("\\s", ""));
-			return registry.containsId(identifier) ? registry.get(identifier) : defaultValue;
+		if (isArray) {
+			return getArrayValue(config, name);
 		}
 
-		final List<String> list = config.get(name);
-		final List<Object> values = new ArrayList<>(list.size());
+		final String identifierString = config.get(name);
 
-		for (String element : list) {
-			final Object object = registry.get(new Identifier(element.replaceAll("\\s", "")));
-
-			if (object != null) {
-				values.add(object);
-			}
+		if (identifierString.isEmpty()) {
+			return defaultValue;
 		}
 
-		return values.toArray((Object[]) Array.newInstance(registryEntryClass, 0));
+		final Identifier identifier =
+				new Identifier(identifierString.replaceAll("\\s", ""));
+		return registry.containsId(identifier) ? registry.get(identifier) : defaultValue;
 	}
 
 	@Override
@@ -117,6 +106,21 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 	@Override
 	public boolean canBeNull() {
 		return true;
+	}
+
+	private Object getArrayValue(CommentedFileConfig config, String name) {
+		final List<String> list = config.get(name);
+		final List<Object> values = new ArrayList<>(list.size());
+
+		for (String element : list) {
+			final Object object = registry.get(new Identifier(element.replaceAll("\\s", "")));
+
+			if (object != null) {
+				values.add(object);
+			}
+		}
+
+		return values.toArray((Object[]) Array.newInstance(registryEntryClass, 0));
 	}
 
 	static void initialize() {
