@@ -46,14 +46,13 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 			FabricUtils.findField(Registry.class, "DEFAULT_ENTRIES", "field_11140");
 
 	private static Map<Class<?>, MutableRegistry<?>> registries = new HashMap<>();
+	private final Class<?> registryEntryClass;
+	private final Registry<Object> registry;
+	private final boolean isArray;
 
 	static {
 		reloadRegistries();
 	}
-
-	private final Class<?> registryEntryClass;
-	private final Registry<Object> registry;
-	private final boolean isArray;
 
 	@SuppressWarnings("unchecked")
 	IdentifierTypeAdapter(Class<?> registryEntryClass, boolean isArray) {
@@ -140,10 +139,14 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 		}
 
 		for (Identifier registryID : Registry.REGISTRIES.getIds()) {
-			registries.put(
-					defaultEntries.get(registryID).get().getClass(),
-					Registry.REGISTRIES.get(registryID)
-			);
+			Class<?> clazz = defaultEntries.get(registryID).get().getClass();
+
+			//We do this so we get the right base class, e.g. Item instead of AirBlockItem.
+			if (clazz.getSuperclass() != Object.class) {
+				clazz = clazz.getSuperclass();
+			}
+
+			registries.put(clazz, Registry.REGISTRIES.get(registryID));
 		}
 	}
 
