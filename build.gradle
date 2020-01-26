@@ -1,8 +1,8 @@
-apply from: "https://raw.githubusercontent.com/TheRandomLabs/Common-Gradle/master/fabric/1.15.gradle"
-
 archivesBaseName = "trlutils-fabric"
 version = "1.15.2-1.0.0.0-fabric"
 group = "com.therandomlabs.utils.fabric"
+
+apply from: "https://raw.githubusercontent.com/TheRandomLabs/Common-Gradle/master/fabric/1.15.gradle"
 
 dependencies {
 	modApi "com.github.TheRandomLabs:TRLUtils-Config:master-SNAPSHOT"
