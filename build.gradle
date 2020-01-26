@@ -6,6 +6,6 @@ apply from: "https://raw.githubusercontent.com/TheRandomLabs/Common-Gradle/maste
 archivesBaseName = "trlutils-fabric"
 
 dependencies {
-	api "com.github.TheRandomLabs:TRLUtils-Config:master-SNAPSHOT"
+	modApi "com.github.TheRandomLabs:TRLUtils-Config:master-SNAPSHOT"
 	modApi "io.github.cottonmc:cotton-client-commands:0.4.2+1.14.3-SNAPSHOT"
 }
