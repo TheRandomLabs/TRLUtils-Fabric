@@ -1,0 +1,20 @@
+{
+	"schemaVersion": 1,
+	"id": "trlutils-fabric-test",
+	"version": "${version}",
+	"name": "TRLUtils-Fabric Test",
+	"description": "A test mod for TRLUtils-Fabric.",
+	"authors": [
+		"TheRandomLabs"
+	],
+	"contact": {
+		"homepage": "https://github.com/TheRandomLabs/TRLUtils-Fabric",
+		"sources": "https://github.com/TheRandomLabs/TRLUtils-Fabric"
+	},
+	"license": "MIT",
+	"entrypoints": {
+		"trlutils-fabric-test": [
+			"com.therandomlabs.trlutils.fabric.test.TRLUtilsFabricTest"
+		]
+	}
+}

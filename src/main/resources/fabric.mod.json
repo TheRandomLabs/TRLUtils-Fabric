@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"id": "trlutils-fabric",
+	"version": "${version}",
+	"name": "TRLUtils-Fabric",
+	"description": "A collection of utilities I use in most of my Minecraft Fabric mods.",
+	"authors": [
+		"TheRandomLabs"
+	],
+	"contact": {
+		"homepage": "https://github.com/TheRandomLabs/TRLUtils-Fabric",
+		"sources": "https://github.com/TheRandomLabs/TRLUtils-Fabric"
+	},
+	"license": "MIT"
+}

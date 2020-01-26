@@ -48,8 +48,8 @@ public final class ConfigReloadCommand {
 
 	private final Class<?> configClass;
 
-	private Consumer<CommandSource> preReload;
-	private Consumer<CommandSource> postReload;
+	private Consumer<? super CommandSource> preReload;
+	private Consumer<? super CommandSource> postReload;
 
 	private String serverSuccessMessage;
 
@@ -76,7 +76,7 @@ public final class ConfigReloadCommand {
 	 * @param preReload a {@link Consumer} that accepts a {@link CommandSource}.
 	 * @return this {@link ConfigReloadCommand}.
 	 */
-	public ConfigReloadCommand preReload(Consumer<CommandSource> preReload) {
+	public ConfigReloadCommand preReload(Consumer<? super CommandSource> preReload) {
 		Preconditions.checkNotNull(preReload, "preReload should not be null");
 
 		if (this.preReload != null) {
@@ -93,7 +93,7 @@ public final class ConfigReloadCommand {
 	 * @param postReload a {@link Consumer} that accepts a {@link CommandSource}.
 	 * @return this {@link ConfigReloadCommand}.
 	 */
-	public ConfigReloadCommand postReload(Consumer<CommandSource> postReload) {
+	public ConfigReloadCommand postReload(Consumer<? super CommandSource> postReload) {
 		Preconditions.checkNotNull(postReload, "postReload should not be null");
 
 		if (this.preReload != null) {
@@ -128,7 +128,7 @@ public final class ConfigReloadCommand {
 	 *
 	 * @param dispatcher a {@link CommandDispatcher}.
 	 */
-	public void registerClient(CommandDispatcher<CommandSource> dispatcher) {
+	public void registerClient(CommandDispatcher<? extends CommandSource> dispatcher) {
 		Preconditions.checkNotNull(dispatcher, "dispatcher should not be null");
 		register(dispatcher, clientName, 0);
 	}
@@ -139,15 +139,16 @@ public final class ConfigReloadCommand {
 	 *
 	 * @param dispatcher a {@link CommandDispatcher}.
 	 */
-	public void registerServer(CommandDispatcher<CommandSource> dispatcher) {
+	public void registerServer(CommandDispatcher<? extends CommandSource> dispatcher) {
 		Preconditions.checkNotNull(dispatcher, "dispatcher should not be null");
 		register(dispatcher, name, 4);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void register(
-			CommandDispatcher<CommandSource> dispatcher, String name, int permissionLevel
+			CommandDispatcher<? extends CommandSource> dispatcher, String name, int permissionLevel
 	) {
-		dispatcher.register(
+		((CommandDispatcher<CommandSource>) dispatcher).register(
 				LiteralArgumentBuilder.<CommandSource>literal(name).
 						requires(source -> source.hasPermissionLevel(permissionLevel)).
 						executes(this::execute)

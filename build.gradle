@@ -2,18 +2,17 @@ ext.disableTRLUtilsFabric = true
 
 apply from: "https://raw.githubusercontent.com/TheRandomLabs/Common-Gradle/master/fabric/1.15.gradle"
 
-archivesBaseName = "trlutilsfabric"
+archivesBaseName = "trlutils-fabric"
 version = "1.15.2-1.0.0.0-fabric"
 group = "com.therandomlabs.utils.fabric"
-
-repositories {
-	maven {
-		name "CottonMC"
-        url "http://server.bbkr.space:8081/artifactory/libs-snapshot"
-    }
-}
 
 dependencies {
 	modApi "com.github.TheRandomLabs:TRLUtils-Config:master-SNAPSHOT"
 	modApi "io.github.cottonmc:cotton-client-commands:0.4.2+1.14.3-SNAPSHOT"
+}
+
+sourceSets {
+	main {
+		runtimeClasspath += test.runtimeClasspath
+	}
 }
