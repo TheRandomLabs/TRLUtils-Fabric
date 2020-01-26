@@ -1,49 +1,43 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018-2019 TheRandomLabs
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package com.therandomlabs.utils.fabric.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
 import com.therandomlabs.utils.config.ConfigManager;
 import com.therandomlabs.utils.fabric.FabricUtils;
 
+/**
+ * At the moment, this class just contains {@link #initialize()}.
+ */
 public final class FabricConfig {
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	@interface MCVersion {
-		//Version range
-		String value();
-	}
-
 	private FabricConfig() {}
 
+	/**
+	 * Sets up TRLUtils-Config to work with Fabric.
+	 * This should be called before using TRLUtils-Config in a Fabric mod.
+	 */
 	public static void initialize() {
 		ConfigManager.setClient(FabricUtils.IS_CLIENT);
-		ConfigManager.registerVersionChecker(FabricConfig::testVersionRange);
 		IdentifierTypeAdapter.initialize();
-	}
-
-	private static boolean testVersionRange(Field field) {
-		final MCVersion mcVersion = field.getAnnotation(MCVersion.class);
-
-		if(mcVersion == null) {
-			return true;
-		}
-
-		final String versionRange = mcVersion.value().trim();
-
-		if(versionRange.isEmpty()) {
-			throw new IllegalArgumentException("Version range must not be empty");
-		}
-
-		//TODO
-		/*final VersionRange range = MavenVersionAdapter.createFromVersionSpec(versionRange);
-
-		if(!range.containsVersion(ForgeUtils.MC_ARTIFACT_VERSION)) {
-			return false;
-		}*/
-
-		return true;
 	}
 }

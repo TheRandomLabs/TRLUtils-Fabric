@@ -1,3 +1,26 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018-2019 TheRandomLabs
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package com.therandomlabs.utils.fabric.config;
 
 import java.lang.reflect.Array;
@@ -9,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.therandomlabs.utils.config.TypeAdapter;
 import com.therandomlabs.utils.config.TypeAdapters;
@@ -17,7 +41,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 
-public final class IdentifierTypeAdapter implements TypeAdapter {
+final class IdentifierTypeAdapter implements TypeAdapter {
 	private static final Field DEFAULT_ENTRIES =
 			FabricUtils.findField(Registry.class, "DEFAULT_ENTRIES", "field_11140");
 
@@ -32,7 +56,7 @@ public final class IdentifierTypeAdapter implements TypeAdapter {
 	private final boolean isArray;
 
 	@SuppressWarnings("unchecked")
-	public IdentifierTypeAdapter(Class<?> registryEntryClass, boolean isArray) {
+	IdentifierTypeAdapter(Class<?> registryEntryClass, boolean isArray) {
 		this.registryEntryClass = registryEntryClass;
 		registry = (Registry<Object>) registries.get(registryEntryClass);
 		this.isArray = isArray;
@@ -40,10 +64,10 @@ public final class IdentifierTypeAdapter implements TypeAdapter {
 
 	@Override
 	public Object getValue(CommentedFileConfig config, String name, Object defaultValue) {
-		if(!isArray) {
+		if (!isArray) {
 			final String identifierString = config.get(name);
 
-			if(identifierString.isEmpty()) {
+			if (identifierString.isEmpty()) {
 				return defaultValue;
 			}
 
@@ -55,10 +79,10 @@ public final class IdentifierTypeAdapter implements TypeAdapter {
 		final List<String> list = config.get(name);
 		final List<Object> values = new ArrayList<>(list.size());
 
-		for(String element : list) {
+		for (String element : list) {
 			final Object object = registry.get(new Identifier(element.replaceAll("\\s", "")));
 
-			if(object != null) {
+			if (object != null) {
 				values.add(object);
 			}
 		}
@@ -68,7 +92,7 @@ public final class IdentifierTypeAdapter implements TypeAdapter {
 
 	@Override
 	public void setValue(CommentedFileConfig config, String name, Object value) {
-		if(isArray) {
+		if (isArray) {
 			config.set(
 					name,
 					Arrays.stream((Object[]) value).
@@ -95,17 +119,23 @@ public final class IdentifierTypeAdapter implements TypeAdapter {
 		return true;
 	}
 
+	static void initialize() {
+		TypeAdapters.registerAutoRegistrar(IdentifierTypeAdapter::registerIfRegistryEntry);
+	}
+
 	@SuppressWarnings("unchecked")
-	public static void reloadRegistries() {
+	private static void reloadRegistries() {
+		registries.clear();
+
 		Map<Identifier, Supplier<?>> defaultEntries = null;
 
 		try {
 			defaultEntries = (Map<Identifier, Supplier<?>>) DEFAULT_ENTRIES.get(null);
-		} catch(IllegalAccessException ex) {
+		} catch (IllegalAccessException ex) {
 			FabricUtils.crashReport("Failed to reload registries", ex);
 		}
 
-		for(Identifier registryID : Registry.REGISTRIES.getIds()) {
+		for (Identifier registryID : Registry.REGISTRIES.getIds()) {
 			registries.put(
 					defaultEntries.get(registryID).get().getClass(),
 					Registry.REGISTRIES.get(registryID)
@@ -113,20 +143,16 @@ public final class IdentifierTypeAdapter implements TypeAdapter {
 		}
 	}
 
-	public static void registerIfRegistryEntry(Class<?> clazz) {
-		if(registries.containsKey(clazz)) {
+	private static void registerIfRegistryEntry(Class<?> clazz) {
+		if (registries.containsKey(clazz)) {
 			register(clazz);
-		} else if(clazz.isArray()) {
+		} else if (clazz.isArray()) {
 			final Class<?> componentType = clazz.getComponentType();
 
-			if(registries.containsKey(clazz)) {
+			if (registries.containsKey(clazz)) {
 				register(componentType);
 			}
 		}
-	}
-
-	static void initialize() {
-		TypeAdapters.registerAutoRegistrar(IdentifierTypeAdapter::registerIfRegistryEntry);
 	}
 
 	private static void register(Class<?> clazz) {
