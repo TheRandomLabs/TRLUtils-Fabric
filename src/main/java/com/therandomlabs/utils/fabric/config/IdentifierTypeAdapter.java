@@ -46,7 +46,8 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 	private static final Field DEFAULT_ENTRIES =
 			FabricUtils.findField(Registry.class, "DEFAULT_ENTRIES", "field_11140");
 
-	private static Map<Class<?>, MutableRegistry<?>> registries = new HashMap<>();
+	private static final Map<Class<?>, MutableRegistry<?>> registries = new HashMap<>();
+
 	private final Class<?> registryEntryClass;
 	private final Registry<Object> registry;
 	private final boolean isArray;
@@ -76,7 +77,8 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 
 		final Identifier identifier =
 				new Identifier(identifierString.replaceAll("\\s", ""));
-		return registry.containsId(identifier) ? registry.get(identifier) : defaultValue;
+		final Object value = registry.get(identifier);
+		return value == null ? defaultValue : value;
 	}
 
 	@Override
