@@ -142,7 +142,13 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 		}
 
 		for (Identifier registryID : Registry.REGISTRIES.getIds()) {
-			Class<?> clazz = defaultEntries.get(registryID).get().getClass();
+			final Supplier<?> supplier = defaultEntries.get(registryID);
+
+			if (supplier == null) {
+				continue;
+			}
+
+			Class<?> clazz = supplier.get().getClass();
 
 			//We do this so that we get the right base class, e.g. Item instead of AirBlockItem.
 			if (clazz.getSuperclass() != Object.class) {
