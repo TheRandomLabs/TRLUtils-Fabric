@@ -24,28 +24,23 @@
 package com.therandomlabs.utils.fabric.config;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.therandomlabs.utils.config.TypeAdapter;
 import com.therandomlabs.utils.config.TypeAdapters;
-import com.therandomlabs.utils.fabric.FabricUtils;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 
 @SuppressWarnings("NullAway")
 final class IdentifierTypeAdapter implements TypeAdapter {
-	private static final Field DEFAULT_ENTRIES =
-			FabricUtils.findField(Registry.class, "DEFAULT_ENTRIES", "field_11140");
-
 	private static final Map<Class<?>, MutableRegistry<?>> registries = new HashMap<>();
 
 	private final Class<?> registryEntryClass;
@@ -129,27 +124,24 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 		TypeAdapters.registerAutoRegistrar(IdentifierTypeAdapter::registerIfRegistryEntry);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void reloadRegistries() {
 		registries.clear();
 
-		Map<Identifier, Supplier<?>> defaultEntries = null;
+		for (MutableRegistry<?> registry : Registry.REGISTRIES) {
+			final Optional<Identifier> identifier = registry.getIds().stream().findAny();
 
-		try {
-			defaultEntries = (Map<Identifier, Supplier<?>>) DEFAULT_ENTRIES.get(null);
-		} catch (IllegalAccessException ex) {
-			FabricUtils.crashReport("Failed to reload registries", ex);
-		}
+			if (!identifier.isPresent()) {
+				continue;
+			}
 
-		for (Identifier registryID : Registry.REGISTRIES.getIds()) {
-			Class<?> clazz = defaultEntries.get(registryID).get().getClass();
+			Class<?> clazz = registry.get(identifier.get()).getClass();
 
 			//We do this so that we get the right base class, e.g. Item instead of AirBlockItem.
 			if (clazz.getSuperclass() != Object.class) {
 				clazz = clazz.getSuperclass();
 			}
 
-			registries.put(clazz, Registry.REGISTRIES.get(registryID));
+			registries.put(clazz, registry);
 		}
 	}
 
