@@ -36,12 +36,11 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.therandomlabs.utils.config.TypeAdapter;
 import com.therandomlabs.utils.config.TypeAdapters;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 
 @SuppressWarnings("NullAway")
 final class IdentifierTypeAdapter implements TypeAdapter {
-	private static final Map<Class<?>, MutableRegistry<?>> registries = new HashMap<>();
+	private static final Map<Class<?>, Registry<?>> registries = new HashMap<>();
 
 	private final Class<?> registryEntryClass;
 	private final Registry<Object> registry;
@@ -127,7 +126,7 @@ final class IdentifierTypeAdapter implements TypeAdapter {
 	private static void reloadRegistries() {
 		registries.clear();
 
-		for (MutableRegistry<?> registry : Registry.REGISTRIES) {
+		for (Registry<?> registry : Registry.REGISTRIES) {
 			final Optional<Identifier> identifier = registry.getIds().stream().findAny();
 
 			if (!identifier.isPresent()) {
